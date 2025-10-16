@@ -1460,7 +1460,7 @@ const Leads = () => {
                   backgroundColor="#1640d6"
                   onClick={addtoDataBank}
                 >
-                  Add to data bank
+                  Add to Archived
                 </Button>
                 <Button
                   fontSize={{ base: "12px", md: "14px" }}
