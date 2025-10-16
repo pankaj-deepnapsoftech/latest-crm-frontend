@@ -23,6 +23,17 @@ const CompaniesEditDrawer = ({
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
   const [gstNo, setGstNo] = useState("");
+  const [address, setAddress] = useState("");
+  const [secondPersonName, setSecondPersonName] = useState("");
+  const [secondPersonContact, setSecondPersonContact] = useState("");
+  const [secondPersonDesignation, setSecondPersonDesignation] = useState("");
+  const [status, setStatus] = useState("Not Pick");
+  const [statusOptions, setStatusOptions] = useState([
+    "Not Pick",
+    "Not Interested",
+    "Switch Off",
+  ]);
+  const [customStatus, setCustomStatus] = useState("");
   const [cookies] = useCookies();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,6 +57,11 @@ const CompaniesEditDrawer = ({
           phone: phone,
           website: website,
           gst_no: gstNo,
+          address,
+          secondPersonName,
+          secondPersonContact,
+          secondPersonDesignation,
+          status,
         }),
       });
 
@@ -112,6 +128,11 @@ const CompaniesEditDrawer = ({
       setPhone(data.company?.phone);
       setWebsite(data.company?.website);
       setGstNo(data.company?.gst_no);
+      setAddress(data.company?.address || "");
+      setSecondPersonName(data.company?.secondPersonName || "");
+      setSecondPersonContact(data.company?.secondPersonContact || "");
+      setSecondPersonDesignation(data.company?.secondPersonDesignation || "");
+      setStatus(data.company?.status || "Not Pick");
 
       setIsLoading(false);
     } catch (err) {
@@ -158,6 +179,19 @@ const CompaniesEditDrawer = ({
               />
             </FormControl>
 
+            {/* Address */}
+            <FormControl className="mt-3 mb-5">
+              <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                Address
+              </FormLabel>
+              <Input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter Company Address"
+                className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </FormControl>
+
             <FormControl className="mt-3 mb-5">
               <FormLabel fontWeight="bold" className="text-[#4B5563]">
                 Contact Person
@@ -167,6 +201,48 @@ const CompaniesEditDrawer = ({
                 onChange={(e) => setContact(e.target.value)}
                 type="text"
                 placeholder="Contact Person"
+                className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </FormControl>
+
+            {/* Second Person Name */}
+            <FormControl className="mt-3 mb-5">
+              <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                2nd Person Name
+              </FormLabel>
+              <Input
+                value={secondPersonName}
+                onChange={(e) => setSecondPersonName(e.target.value)}
+                type="text"
+                placeholder="Enter 2nd Person Name"
+                className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </FormControl>
+
+            {/* Second Person Contact */}
+            <FormControl className="mt-3 mb-5">
+              <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                2nd Person Contact
+              </FormLabel>
+              <Input
+                value={secondPersonContact}
+                onChange={(e) => setSecondPersonContact(e.target.value)}
+                type="text"
+                placeholder="Enter 2nd Person Contact"
+                className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </FormControl>
+
+            {/* Second Person Designation */}
+            <FormControl className="mt-3 mb-5">
+              <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                2nd Person Designation
+              </FormLabel>
+              <Input
+                value={secondPersonDesignation}
+                onChange={(e) => setSecondPersonDesignation(e.target.value)}
+                type="text"
+                placeholder="Enter 2nd Person Designation"
                 className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </FormControl>
@@ -220,6 +296,41 @@ const CompaniesEditDrawer = ({
                 placeholder="GST No."
                 className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
+            </FormControl>
+
+            {/* Status with Add More */}
+            <FormControl className="mt-3 mb-5">
+              <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                Status
+              </FormLabel>
+              <Select value={status} onChange={(e) => setStatus(e.target.value)} placeholder="Select status">
+                {statusOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </Select>
+              <div className="flex gap-2 mt-2">
+                <Input
+                  value={customStatus}
+                  onChange={(e) => setCustomStatus(e.target.value)}
+                  placeholder="Add more status"
+                />
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const val = customStatus.trim();
+                    if (!val) return;
+                    if (!statusOptions.includes(val)) {
+                      setStatusOptions((prev) => [...prev, val]);
+                      setStatus(val);
+                    }
+                    setCustomStatus("");
+                  }}
+                >
+                  Add
+                </Button>
+              </div>
             </FormControl>
 
             <Button

@@ -42,6 +42,7 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
   const socket = useContext(SocketContext);
   const { role, ...auth } = useSelector((state) => state.auth);
   const [showDMLeadsSubmenu, setShowDMLeadsSubmenu] = useState(false);
+  const [showProspectsSubmenu, setShowProspectsSubmenu] = useState(false);
   const user = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
@@ -157,55 +158,64 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
           </li>
         </NavLink>
 
-        <NavLink
-          to="individuals"
-          className={({ isActive }) =>
-            isActive ? "text-[#1640d6]" : "text-black"
-          }
-          onClick={() => {
-            isMenuOpen && setIsMenuOpen(false);
-          }}
+        <div
+          onClick={() => setShowProspectsSubmenu((prev) => !prev)}
+          className="cursor-pointer flex gap-x-12 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
         >
-          <li
-            className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
-            onClick={() => changeOnlineStatus(false)}
-          >
+          <div className="flex gap-x-2">
             <span>
               <MdOutlinePeople />
             </span>
-            <span>Individuals</span>
-            {!checkAccess(auth, "people")?.isAllowed && (
-              <span className="mt-1">
-                <FaLock size="12" color="#b1b1b1" />
-              </span>
-            )}
-          </li>
-        </NavLink>
-
-        <NavLink
-          to="corporates"
-          className={({ isActive }) =>
-            isActive ? "text-[#1640d6]" : "text-black"
-          }
-          onClick={() => {
-            isMenuOpen && setIsMenuOpen(false);
-          }}
-        >
-          <li
-            className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
-            onClick={() => changeOnlineStatus(false)}
-          >
-            <span>
-              <MdHomeWork />
-            </span>
-            <span>Corporates</span>
-            {!checkAccess(auth, "company")?.isAllowed && (
-              <span className="mt-1">
-                <FaLock size="12" color="#b1b1b1" />
-              </span>
-            )}
-          </li>
-        </NavLink>
+            <span>Prospects</span>
+          </div>
+          <MdKeyboardArrowDown />
+        </div>
+        {showProspectsSubmenu && (
+          <div>
+            <NavLink
+              to="individuals"
+              className={({ isActive }) =>
+                isActive ? "text-[#1640d6]" : "text-black"
+              }
+              onClick={() => {
+                isMenuOpen && setIsMenuOpen(false);
+              }}
+            >
+              <li
+                className="flex gap-x-2 pl-6 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
+                onClick={() => changeOnlineStatus(false)}
+              >
+                <span>Individuals</span>
+                {!checkAccess(auth, "people")?.isAllowed && (
+                  <span className="mt-1">
+                    <FaLock size="12" color="#b1b1b1" />
+                  </span>
+                )}
+              </li>
+            </NavLink>
+            <NavLink
+              to="corporates"
+              className={({ isActive }) =>
+                isActive ? "text-[#1640d6]" : "text-black"
+              }
+              onClick={() => {
+                isMenuOpen && setIsMenuOpen(false);
+              }}
+            >
+              <li
+                className="flex gap-x-2 pl-6 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
+                onClick={() => changeOnlineStatus(false)}
+              >
+                <span>Corporates</span>
+                {!checkAccess(auth, "company")?.isAllowed && (
+                  <span className="mt-1">
+                    <FaLock size="12" color="#b1b1b1" />
+                  </span>
+                )}
+              </li>
+            </NavLink>
+          </div>
+        )}
 
         <NavLink
           to="leads"
