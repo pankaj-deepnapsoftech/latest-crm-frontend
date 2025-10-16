@@ -475,7 +475,7 @@ const DataBank = () => {
                 {/* <span className="mr-2">
                     <MdArrowBack />
                   </span> */}
-                <h1 className="font-extrabold">Data Bank List</h1>
+                <h1 className="font-extrabold">Archived List</h1>
                 <div className="mt-2 md:mt-0 flex justify-end flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
                   <textarea
                     className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none"
@@ -504,7 +504,7 @@ const DataBank = () => {
                     Move to lead
                   </Button>
                   <Button colorScheme="blue">
-                    Total Data Bank list: {leadLength}
+                    Total Archived list: {leadLength}
                   </Button>
                 </div>
               </div>

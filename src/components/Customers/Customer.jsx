@@ -53,6 +53,10 @@ import { Link } from "react-router-dom";
 
 const columns = [
   {
+    Header: "Customer ID",
+    accessor: "uniqueId",
+  },
+  {
     Header: "Created By",
     accessor: "creator",
   },
@@ -232,6 +236,7 @@ const Customer = () => {
     if (searchKey.trim() !== "") {
       const searchedData = data.filter(
         (d) =>
+          d?._id?.toLowerCase().includes(searchKey.toLowerCase()) ||
           d?.name?.toLowerCase().includes(searchKey.toLowerCase()) ||
           d?.creator?.toLowerCase().includes(searchKey.toLowerCase()) ||
           (d?.createdAt &&
@@ -437,11 +442,7 @@ const Customer = () => {
                                 return (
                                   <Th
                                     className={`
-                    ${
-                      column.id === "name"
-                        ? "sticky top-0 left-[-2px]"
-                        : ""
-                    }
+                    ${column.id === "name" ? "sticky top-0 left-[-2px]" : ""}
                     text-transform: capitalize
                     font-size: 15px
                     font-weight: 700

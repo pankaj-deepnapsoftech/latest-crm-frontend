@@ -129,7 +129,6 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
           </li>
         </NavLink>
 
-
         <NavLink
           to="chats"
           className={({ isActive }) =>
@@ -296,7 +295,7 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
                 <FaLock size="12" color="#b1b1b1" />
               </span>
             )}
-          </div>  
+          </div>
           <MdKeyboardArrowDown />
         </div>
         {showDMLeadsSubmenu && (
@@ -761,7 +760,7 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
             <span>
               <FaDatabase />
             </span>
-            <span>Data Bank</span>
+            <span>Archived</span>
 
             {!checkAccess(auth, "databank")?.isAllowed && (
               <span className="mt-1">
