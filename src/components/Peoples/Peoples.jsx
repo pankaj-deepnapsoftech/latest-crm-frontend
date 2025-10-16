@@ -59,6 +59,10 @@ const columns = [
     accessor: "creator",
   },
   {
+    Header: "ID",
+    accessor: "uniqueId",
+  },
+  {
     Header: "Created On",
     accessor: "created_on",
   },
@@ -95,7 +99,6 @@ const columns = [
   //     const reSendVerificationOtp = async () => {
   //       try {
 
-
   //         const response = await fetch(
   //           `${baseURL}people/resend-otp/${personId}`,
   //           {
@@ -108,7 +111,6 @@ const columns = [
   //         );
 
   //         const otpResponse = await response.json();
-
 
   //         // Show toast for resend OTP
   //         toast.success("OTP has been resent successfully!");
