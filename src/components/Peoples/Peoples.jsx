@@ -67,6 +67,10 @@ const columns = [
     accessor: "created_on",
   },
   {
+    Header: "ID",
+    accessor: "uniqueId",
+  },
+  {
     Header: "First Name",
     accessor: "firstname",
   },
@@ -81,6 +85,115 @@ const columns = [
   {
     Header: "Email",
     accessor: "email",
+  },
+  {
+    Header: "Verification",
+    accessor: "verified",
+    Cell: ({ row }) => {
+      const { isOpen, onOpen, onClose } = useDisclosure();
+      const cancelRef = useRef();
+      const [cookies] = useCookies();
+      const baseURL = process.env.REACT_APP_BACKEND_URL;
+
+      const personId = row.original._id;
+      const [otp, setOtp] = useState("");
+      const [isVerified, setIsVerified] = useState(row.original.verify);
+
+      const reSendVerificationOtp = async () => {
+        try {
+          const response = await fetch(
+            `${baseURL}people/resend-otp/${personId}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${cookies?.access_token}`,
+              },
+            }
+          );
+          const otpResponse = await response.json();
+          toast.success("OTP has been resent successfully!");
+        } catch (error) {
+          toast.error("Failed to resend OTP. Please try again.");
+        }
+      };
+
+      const verifyOtp = async () => {
+        try {
+          if (!personId || !otp) {
+            toast.warning("Please enter OTP before verifying.");
+            return;
+          }
+          const numericOtp = Number(otp);
+          if (isNaN(numericOtp)) {
+            toast.warning("Invalid OTP format. Please enter a valid number.");
+            return;
+          }
+          const response = await fetch(
+            `${baseURL}people/verify-people/${personId}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${cookies?.access_token}`,
+              },
+              body: JSON.stringify({ otp: numericOtp }),
+            }
+          );
+          const verifyResponse = await response.json();
+          if (verifyResponse.success) {
+            toast.success("OTP verified successfully!");
+            setIsVerified(true);
+            onClose();
+          } else {
+            toast.error(verifyResponse.message || "Invalid OTP. Please try again.");
+          }
+        } catch (error) {
+          toast.error("Something went wrong. Please try again.");
+        }
+      };
+
+      return (
+        <>
+          {isVerified ? (
+            <span className="px-2 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
+              Verified
+            </span>
+          ) : (
+            <>
+              <Button size="sm" colorScheme="blue" onClick={onOpen}>
+                Verify
+              </Button>
+              <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
+                <AlertDialogOverlay>
+                  <AlertDialogContent className="p-6 rounded-lg shadow-lg">
+                    <AlertDialogHeader className="text-xl font-semibold text-center">
+                      Confirm Verification
+                    </AlertDialogHeader>
+                    <AlertDialogBody className="text-center space-y-4">
+                      <p className="text-gray-600">A one-time password has been sent to your email</p>
+                      <Input
+                        className="text-center border border-gray-300 rounded-md py-2 px-4 w-3/4 mx-auto"
+                        placeholder="Enter OTP"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                      />
+                      <div className="flex justify-center gap-4">
+                        <Button onClick={verifyOtp} colorScheme="blue">Verify OTP</Button>
+                        <Button onClick={reSendVerificationOtp} variant="outline" colorScheme="gray">Resend OTP</Button>
+                      </div>
+                    </AlertDialogBody>
+                    <AlertDialogFooter className="flex justify-end gap-3">
+                      <Button ref={cancelRef} onClick={onClose} variant="outline">Cancel</Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialogOverlay>
+              </AlertDialog>
+            </>
+          )}
+        </>
+      );
+    },
   },
   // {
   //   Header: "Verification",
