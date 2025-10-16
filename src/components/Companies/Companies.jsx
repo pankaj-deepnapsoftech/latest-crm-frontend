@@ -65,10 +65,7 @@ const columns = [
     Header: "Created On",
     accessor: "created_on",
   },
-  {
-    Header: "ID",
-    accessor: "uniqueId",
-  },
+ 
   {
     Header: "Name",
     accessor: "companyname",
