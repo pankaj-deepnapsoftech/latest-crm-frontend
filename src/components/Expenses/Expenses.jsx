@@ -55,6 +55,10 @@ import { Link } from "react-router-dom";
 
 const columns = [
   {
+    Header: "Type",
+    accessor: "expenseType",
+  },
+  {
     Header: "Created By",
     accessor: "creator",
   },
@@ -73,6 +77,10 @@ const columns = [
   {
     Header: "Price",
     accessor: "price",
+  },
+  {
+    Header: "Approval",
+    accessor: "approvalStatus",
   },
   {
     Header: "Description",
@@ -488,7 +496,9 @@ const Expenses = () => {
                                     )}
 
                                     {cell.column.id === "creator" && (
-                                      <span className="text-blue-500">{row.original?.creator}</span>
+                                      <span className="text-blue-500">
+                                        {row.original?.creator}
+                                      </span>
                                     )}
                                     {cell.column.id === "price" && (
                                       <span className="text-green-600 font-bold">
@@ -526,6 +536,80 @@ const Expenses = () => {
                                     confirmDeleteHandler();
                                   }}
                                 />
+                                {role === "Super Admin" &&
+                                  row.original?.approvalStatus ===
+                                    "Pending" && (
+                                    <>
+                                      <Button
+                                        size="xs"
+                                        colorScheme="green"
+                                        onClick={async () => {
+                                          try {
+                                            const response = await fetch(
+                                              baseURL +
+                                                "expense/update-approval",
+                                              {
+                                                method: "POST",
+                                                headers: {
+                                                  "Content-Type":
+                                                    "application/json",
+                                                  authorization: `Bearer ${cookies?.access_token}`,
+                                                },
+                                                body: JSON.stringify({
+                                                  expenseId: row.original?._id,
+                                                  action: "approve",
+                                                }),
+                                              }
+                                            );
+                                            const data = await response.json();
+                                            if (!data.success) {
+                                              throw new Error(data.message);
+                                            }
+                                            toast.success("Approved");
+                                            fetchAllExpenses();
+                                          } catch (err) {
+                                            toast.error(err.message);
+                                          }
+                                        }}
+                                      >
+                                        Approve
+                                      </Button>
+                                      <Button
+                                        size="xs"
+                                        colorScheme="red"
+                                        onClick={async () => {
+                                          try {
+                                            const response = await fetch(
+                                              baseURL +
+                                                "expense/update-approval",
+                                              {
+                                                method: "POST",
+                                                headers: {
+                                                  "Content-Type":
+                                                    "application/json",
+                                                  authorization: `Bearer ${cookies?.access_token}`,
+                                                },
+                                                body: JSON.stringify({
+                                                  expenseId: row.original?._id,
+                                                  action: "reject",
+                                                }),
+                                              }
+                                            );
+                                            const data = await response.json();
+                                            if (!data.success) {
+                                              throw new Error(data.message);
+                                            }
+                                            toast.success("Rejected");
+                                            fetchAllExpenses();
+                                          } catch (err) {
+                                            toast.error(err.message);
+                                          }
+                                        }}
+                                      >
+                                        Reject
+                                      </Button>
+                                    </>
+                                  )}
                               </Td>
                             </Tr>
                           );

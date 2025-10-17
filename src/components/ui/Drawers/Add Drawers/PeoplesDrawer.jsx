@@ -222,6 +222,7 @@ const PeoplesDrawer = ({ closeDrawerHandler, fetchAllPeople }) => {
               type="number"
               placeholder="Enter Phone Number"
               className="rounded mt-2 border p-3 focus:ring-2 focus:ring-blue-400"
+              maxLength={10}
             />
           </FormControl>
 

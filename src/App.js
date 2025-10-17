@@ -61,6 +61,7 @@ import SuperAdminProducts from "./components/modules/SuperAdminProducts";
 import SuperAdminSubscriptions from "./components/modules/SuperAdminSubscriptions";
 import FloatingChat from "./components/Chats/FloatingChat";
 import { useSelector } from "react-redux";
+import Meetings from "./components/Meetings/Meetings";
 
 function App() {
   const [showAuthenticationMenu, setShowAuthenticationMenu] = useState(false);
@@ -109,7 +110,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/super-admin-login" element={<SuperAdminLogin />} />
-          <Route path="/super-admin-register" element={<SuperAdminRegister />} />
+          <Route
+            path="/super-admin-register"
+            element={<SuperAdminRegister />}
+          />
           <Route path="/super-admin" element={<SuperAdminLayout />}>
             <Route index element={<SuperAdminDashboard />} />
             <Route path="leads" element={<SuperAdminLeads />} />
@@ -141,6 +145,7 @@ function App() {
             <Route path="proforma-invoices" element={<ProformaInvoices />} />
             <Route path="payments" element={<Payments />} />
             <Route path="products" element={<Products />} />
+            <Route path="meetings" element={<Meetings />} />
             <Route path="products-category" element={<ProductCategory />} />
             <Route path="expenses" element={<Expenses />} />
             <Route path="expenses-category" element={<ExpenseCategory />} />

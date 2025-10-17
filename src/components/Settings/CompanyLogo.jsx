@@ -14,8 +14,8 @@ const CompanyLogo = () => {
   const [companyLogo, setCompanyLogo] = useState();
   const [updating, setUpdating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const {role, ...auth} = useSelector((state) => state.auth);
-  const {isAllowed, msg} = checkAccess(auth, 'website configuration');
+  const { role, ...auth } = useSelector((state) => state.auth);
+  const { isAllowed, msg } = checkAccess(auth, "website configuration");
 
   const editSettingsHandler = async (e) => {
     e.preventDefault();
@@ -39,51 +39,50 @@ const CompanyLogo = () => {
     img.onload = async () => {
       if (img.width > MAX_WIDTH || img.height > MAX_HEIGHT) {
         toast.error(`Logo dimesnsions should be ${MAX_WIDTH}x${MAX_HEIGHT}`);
-      }
-      else{
-      const formData = new FormData();
-      formData.append("file", imageRef.current.files[0]);
+      } else {
+        const formData = new FormData();
+        formData.append("file", imageRef.current.files[0]);
 
-      const imageUploadResponse = await fetch(
-        process.env.REACT_APP_IMAGE_UPLOAD_URL,
-        {
+        const uploadUrl =
+          process.env.REACT_APP_IMAGE_UPLOAD_URL ||
+          "https://images.deepmart.shop/upload";
+        const imageUploadResponse = await fetch(uploadUrl, {
           method: "POST",
           body: formData,
+        });
+        const imageUrl = await imageUploadResponse.json();
+
+        if (imageUrl?.error) {
+          throw new Error(imageUrl?.error);
         }
-      );
-      const imageUrl = await imageUploadResponse.json();
 
-      if (imageUrl?.error) {
-        throw new Error(imageUrl?.error);
-      }
+        const body = {
+          company_logo: imageUrl[0],
+        };
 
-      const body = {
-        company_logo: imageUrl[0],
-      };
-
-      try {
-        const response = await fetch(
-          process.env.REACT_APP_BACKEND_URL + "setting/edit",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${cookies?.access_token}`,
-            },
-            body: JSON.stringify(body),
+        try {
+          const response = await fetch(
+            process.env.REACT_APP_BACKEND_URL + "setting/edit",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${cookies?.access_token}`,
+              },
+              body: JSON.stringify(body),
+            }
+          );
+          const data = await response.json();
+          if (!data.success) {
+            throw new Error(data.message);
           }
-        );
-        const data = await response.json();
-        if (!data.success) {
-          throw new Error(data.message);
+          toast.success(data.message);
+          setReload((prev) => !prev);
+        } catch (error) {
+          toast.error(error.message);
+        } finally {
+          setUpdating(false);
         }
-        toast.success(data.message);
-        setReload((prev) => !prev);
-      } catch (error) {
-        toast.error(error.message);
-      } finally {
-        setUpdating(false);
-      }
       }
     };
     reader.readAsDataURL(imageRef.current.files[0]);
@@ -115,7 +114,7 @@ const CompanyLogo = () => {
   };
 
   useEffect(() => {
-    if(isAllowed){
+    if (isAllowed) {
       getSettingsHandler();
     }
   }, [reload]);
