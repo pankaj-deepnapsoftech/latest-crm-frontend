@@ -135,7 +135,7 @@ function App() {
             <Route path="facebook-leads" element={<IndiamartLeads />} />
             <Route path="instagram-leads" element={<IndiamartLeads />} />
             <Route path="google-leads" element={<IndiamartLeads />} />
-            <Route path="assigned-leads" element={<AssignedLeads />} />
+            {/* <Route path="assigned-leads" element={<AssignedLeads />} /> */}
             <Route path="offers" element={<Offers />} />
             <Route path="invoices" element={<Invoices />} />
             <Route path="proforma-invoices" element={<ProformaInvoices />} />

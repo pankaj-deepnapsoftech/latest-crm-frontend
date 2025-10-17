@@ -354,13 +354,13 @@ const Customer = () => {
                   <option value={100}>100</option>
                   <option value={100000}>All</option>
                 </Select>
-                {/* <Button
+                <Button
               onClick={addCustomersHandler}
               color="white"
               backgroundColor="#1640d6"
             >
               Add New Customer
-            </Button> */}
+            </Button>
               </div>
             </div>
 

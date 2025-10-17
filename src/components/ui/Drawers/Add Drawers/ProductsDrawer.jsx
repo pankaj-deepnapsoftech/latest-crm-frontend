@@ -22,6 +22,7 @@ const ProductsDrawer = ({ fetchAllProducts, closeDrawerHandler }) => {
   const [model, setModel] = useState("");
   const [category, setCategory] = useState();
   const [categoryOptions, setCategoryOptions] = useState();
+  const [itemType, setItemType] = useState({ value: "Product", label: "Product" });
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [ref, setRef] = useState("");
@@ -53,22 +54,31 @@ const ProductsDrawer = ({ fetchAllProducts, closeDrawerHandler }) => {
 
     try {
       const formData = new FormData();
+      console.log("first we are hewre")
       formData.append("file", file.current.files[0]);
-
+      console.log("file url :: ",file.current.files[0]);
+      console.log("second we are hewre")
+      console.log("process :::",process.env.REACT_APP_IMAGE_UPLOAD_URL)
       const imageUploadResponse = await fetch(process.env.REACT_APP_IMAGE_UPLOAD_URL,
         {
           method: "POST",
           body: formData,
         }
       );
+      console.log("third we are hewre",imageUploadResponse)
+
+      if (!imageUploadResponse.ok) {
+        throw new Error(`Image upload failed (${imageUploadResponse.status}) - check REACT_APP_IMAGE_UPLOAD_URL for test mode`);
+      }
       const imageUrl = await imageUploadResponse.json();
+      console.log("fourth we are hewre")
 
       if (imageUrl?.error) {
         throw new Error(imageUrl?.error);
       }
 
       const baseURL = process.env.REACT_APP_BACKEND_URL;
-
+    console.log("product response reaching hjere :: ",baseURL)
       const response = await fetch(baseURL + "product/create-product", {
         method: "POST",
         headers: {
@@ -84,6 +94,7 @@ const ProductsDrawer = ({ fetchAllProducts, closeDrawerHandler }) => {
           imageUrl: imageUrl[0],
           model,
           stock,
+          type: itemType?.value,
         }),
       });
 
@@ -213,6 +224,21 @@ const ProductsDrawer = ({ fetchAllProducts, closeDrawerHandler }) => {
                 setCategory(d);
               }}
               isSearchable={true}
+            />
+          </div>
+
+          <div className="mt-2 mb-5">
+            <label className="font-bold text-[#4B5563]">Item Type</label>
+            <Select
+              className="rounded mt-2"
+              options={[
+                { value: "Product", label: "Product" },
+                { value: "Service", label: "Service" },
+              ]}
+              placeholder="Select type"
+              value={itemType}
+              onChange={(d) => setItemType(d)}
+              isSearchable={false}
             />
           </div>
 

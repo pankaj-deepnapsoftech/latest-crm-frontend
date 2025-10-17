@@ -158,24 +158,25 @@ const columns = [
     Header: "Lead Category",
     accessor: "leadCategory",
   },
-  {
-    Header: "Demo File",
-    accessor: "demoPdf",
-    Cell: ({ row }) => (
-      row.original.demoPdf ? (
-        <a
-          href={row.original.demoPdf}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 underline"
-        >
-          View File
-        </a>
-      ) : (
-        <span>No File</span>
-      )
-    ),
-  },
+  // This is the Demo File header commented out.
+  // {
+  //   Header: "Demo File",
+  //   accessor: "demoPdf",
+  //   Cell: ({ row }) => (
+  //     row.original.demoPdf ? (
+  //       <a
+  //         href={row.original.demoPdf}
+  //         target="_blank"
+  //         rel="noopener noreferrer"
+  //         className="text-blue-500 underline"
+  //       >
+  //         View File
+  //       </a>
+  //     ) : (
+  //       <span>No File</span>
+  //     )
+  //   ),
+  // },
 ];
 
 const Leads = () => {
@@ -1913,13 +1914,13 @@ const Leads = () => {
                               <Td className="flex items-center gap-x-3">
                                 {/* KYC Button */}
 
-
-
-                                <FaUserShield size={20}
+                                
+                                {/* This is the KYC Component below commented */}
+                                {/* <FaUserShield size={20}
                                   onClick={() => {
                                     setDataId(row.original?._id);
                                     dispatch(openKYCDrawer());
-                                  }} className="flex items-center justify-center text-blue-500" />
+                                  }} className="flex items-center justify-center text-blue-500" /> */}
 
 
 

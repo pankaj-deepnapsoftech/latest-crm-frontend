@@ -59,10 +59,6 @@ const columns = [
     accessor: "creator",
   },
   {
-    Header: "ID",
-    accessor: "uniqueId",
-  },
-  {
     Header: "Created On",
     accessor: "created_on",
   },

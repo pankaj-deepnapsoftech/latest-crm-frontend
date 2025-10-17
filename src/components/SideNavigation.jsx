@@ -266,7 +266,8 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
           </li>
         </NavLink>
 
-        <NavLink
+        { // This is the Assigned Lead component
+        /* <NavLink
           to="assigned-leads"
           className={({ isActive }) =>
             isActive ? "text-[#1640d6]" : "text-black"
@@ -289,7 +290,7 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
               </span>
             )}
           </li>
-        </NavLink>
+        </NavLink> */}
 
         <div
           onClick={() => setShowDMLeadsSubmenu((prev) => !prev)}
