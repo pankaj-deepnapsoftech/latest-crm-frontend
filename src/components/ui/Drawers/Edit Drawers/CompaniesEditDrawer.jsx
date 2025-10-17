@@ -27,7 +27,7 @@ const CompaniesEditDrawer = ({
   const [secondPersonName, setSecondPersonName] = useState("");
   const [secondPersonContact, setSecondPersonContact] = useState("");
   const [secondPersonDesignation, setSecondPersonDesignation] = useState("");
-  const [status, setStatus] = useState("Not Pick");
+  const [status, setStatus] = useState("");
   const [statusOptions, setStatusOptions] = useState([
     "Not Pick",
     "Not Interested",
@@ -61,7 +61,7 @@ const CompaniesEditDrawer = ({
           secondPersonName,
           secondPersonContact,
           secondPersonDesignation,
-          status,
+          ...(status ? { status } : {}),
         }),
       });
 
@@ -132,7 +132,7 @@ const CompaniesEditDrawer = ({
       setSecondPersonName(data.company?.secondPersonName || "");
       setSecondPersonContact(data.company?.secondPersonContact || "");
       setSecondPersonDesignation(data.company?.secondPersonDesignation || "");
-      setStatus(data.company?.status || "Not Pick");
+      setStatus(data.company?.status || "");
 
       setIsLoading(false);
     } catch (err) {

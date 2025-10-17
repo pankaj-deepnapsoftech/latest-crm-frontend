@@ -41,7 +41,7 @@ import { SocketContext } from "../socket";
 const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
   const socket = useContext(SocketContext);
   const { role, ...auth } = useSelector((state) => state.auth);
-  const [showDMLeadsSubmenu, setShowDMLeadsSubmenu] = useState(false);
+  const [showLeadsSubmenu, setShowLeadsSubmenu] = useState(false);
   const [showProspectsSubmenu, setShowProspectsSubmenu] = useState(false);
   const user = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -216,19 +216,11 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
           </div>
         )}
 
-        <NavLink
-          to="leads"
-          className={({ isActive }) =>
-            isActive ? "text-[#1640d6]" : "text-black"
-          }
-          onClick={() => {
-            isMenuOpen && setIsMenuOpen(false);
-          }}
+        <div
+          onClick={() => setShowLeadsSubmenu((prev) => !prev)}
+          className="cursor-pointer flex gap-x-12 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
         >
-          <li
-            className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
-            onClick={() => changeOnlineStatus(false)}
-          >
+          <div className="flex gap-x-2">
             <span>
               <MdLeaderboard />
             </span>
@@ -238,79 +230,32 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
                 <FaLock size="12" color="#b1b1b1" />
               </span>
             )}
-          </li>
-        </NavLink>
-
-        <NavLink
-          to="meetings"
-          className={({ isActive }) =>
-            isActive ? "text-[#1640d6]" : "text-black"
-          }
-          onClick={() => {
-            isMenuOpen && setIsMenuOpen(false);
-          }}
-        >
-          <li
-            className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
-            onClick={() => changeOnlineStatus(false)}
-          >
-            <span>
-              <MdLeaderboard />
-            </span>
-            <span>Meetings</span>
-            {!checkAccess(auth, "lead")?.isAllowed && (
-              <span className="mt-1">
-                <FaLock size="12" color="#b1b1b1" />
-              </span>
-            )}
-          </li>
-        </NavLink>
-
-        { // This is the Assigned Lead component
-        /* <NavLink
-          to="assigned-leads"
-          className={({ isActive }) =>
-            isActive ? "text-[#1640d6]" : "text-black"
-          }
-          onClick={() => {
-            isMenuOpen && setIsMenuOpen(false);
-          }}
-        >
-          <li
-            className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
-            onClick={() => changeOnlineStatus(false)}
-          >
-            <span>
-              <MdLeaderboard />
-            </span>
-            <span>Assigned Leads</span>
-            {!checkAccess(auth, "lead")?.isAllowed && (
-              <span className="mt-1">
-                <FaLock size="12" color="#b1b1b1" />
-              </span>
-            )}
-          </li>
-        </NavLink> */}
-
-        <div
-          onClick={() => setShowDMLeadsSubmenu((prev) => !prev)}
-          className="cursor-pointer flex gap-x-12 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
-        >
-          <div className="flex gap-x-2">
-            <span>
-              <MdLeaderboard />
-            </span>
-            <span>DM Leads</span>
-            {!checkAccess(auth, "lead")?.isAllowed && (
-              <span className="mt-1">
-                <FaLock size="12" color="#b1b1b1" />
-              </span>
-            )}
           </div>
           <MdKeyboardArrowDown />
         </div>
-        {showDMLeadsSubmenu && (
+        {showLeadsSubmenu && (
           <div>
+            <NavLink
+              to="leads"
+              className={({ isActive }) =>
+                isActive ? "text-[#1640d6]" : "text-black"
+              }
+              onClick={() => {
+                isMenuOpen && setIsMenuOpen(false);
+              }}
+            >
+              <li
+                className="flex gap-x-2 pl-6 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
+                onClick={() => changeOnlineStatus(false)}
+              >
+                <span>All Leads</span>
+                {!checkAccess(auth, "lead")?.isAllowed && (
+                  <span className="mt-1">
+                    <FaLock size="12" color="#b1b1b1" />
+                  </span>
+                )}
+              </li>
+            </NavLink>
             <NavLink
               to="indiamart-leads"
               className={({ isActive }) =>
@@ -418,6 +363,58 @@ const SideNavigation = ({ isMenuOpen, setIsMenuOpen }) => {
             </NavLink>
           </div>
         )}
+
+        <NavLink
+          to="meetings"
+          className={({ isActive }) =>
+            isActive ? "text-[#1640d6]" : "text-black"
+          }
+          onClick={() => {
+            isMenuOpen && setIsMenuOpen(false);
+          }}
+        >
+          <li
+            className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
+            onClick={() => changeOnlineStatus(false)}
+          >
+            <span>
+              <MdLeaderboard />
+            </span>
+            <span>Meetings</span>
+            {!checkAccess(auth, "lead")?.isAllowed && (
+              <span className="mt-1">
+                <FaLock size="12" color="#b1b1b1" />
+              </span>
+            )}
+          </li>
+        </NavLink>
+
+        { // This is the Assigned Lead component
+        /* <NavLink
+          to="assigned-leads"
+          className={({ isActive }) =>
+            isActive ? "text-[#1640d6]" : "text-black"
+          }
+          onClick={() => {
+            isMenuOpen && setIsMenuOpen(false);
+          }}
+        >
+          <li
+            className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] text-[15px]"
+            onClick={() => changeOnlineStatus(false)}
+          >
+            <span>
+              <MdLeaderboard />
+            </span>
+            <span>Assigned Leads</span>
+            {!checkAccess(auth, "lead")?.isAllowed && (
+              <span className="mt-1">
+                <FaLock size="12" color="#b1b1b1" />
+              </span>
+            )}
+          </li>
+        </NavLink> */}
+
 
         <NavLink
           to="customers"

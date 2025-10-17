@@ -20,6 +20,13 @@ const PeoplesDrawer = ({ closeDrawerHandler, fetchAllPeople }) => {
   // const [companyId, setCompanyId] = useState('');
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("");
+  const [statusOptions, setStatusOptions] = useState([
+    "Not Pick",
+    "Not Interested",
+    "Switch Off",
+  ]);
+  const [customStatus, setCustomStatus] = useState("");
 
   const dispatch = useDispatch();
 
@@ -54,6 +61,7 @@ const PeoplesDrawer = ({ closeDrawerHandler, fetchAllPeople }) => {
           email: email,
           // company: companyId,
           phone: phone,
+          ...(status ? { status } : {}),
         }),
       });
 
@@ -129,6 +137,41 @@ const PeoplesDrawer = ({ closeDrawerHandler, fetchAllPeople }) => {
               placeholder="Enter First Name"
               className="rounded mt-2 border p-3 focus:ring-2 focus:ring-blue-400"
             />
+          </FormControl>
+
+          {/* Status with Add More */}
+          <FormControl className="mt-3 mb-5">
+            <FormLabel fontWeight="bold" className="text-[#4B5563]">
+              Status
+            </FormLabel>
+            <Select value={status} onChange={(e) => setStatus(e.target.value)} placeholder="Select status">
+              {statusOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </Select>
+            <div className="flex gap-2 mt-2">
+              <Input
+                value={customStatus}
+                onChange={(e) => setCustomStatus(e.target.value)}
+                placeholder="Add more status"
+              />
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  const val = customStatus.trim();
+                  if (!val) return;
+                  if (!statusOptions.includes(val)) {
+                    setStatusOptions((prev) => [...prev, val]);
+                    setStatus(val);
+                  }
+                  setCustomStatus("");
+                }}
+              >
+                Add
+              </Button>
+            </div>
           </FormControl>
 
           {/* Last Name */}

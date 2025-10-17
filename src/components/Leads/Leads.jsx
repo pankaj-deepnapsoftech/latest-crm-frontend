@@ -1,3 +1,4 @@
+//
 import {
   Badge,
   Box,
@@ -45,7 +46,7 @@ import {
   openMoveToDemoDrawer,
   closeMoveToDemoDrawer,
 } from "../../redux/reducers/misc";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import Loading from "../ui/Loading";
@@ -97,87 +98,7 @@ import SMSDrawer from "../ui/Drawers/Add Drawers/SMSDrawer";
 import BulkAssignDrawer from "../ui/Drawers/Add Drawers/BulkAssignDrawer";
 import PieChart from "../ui/Charts/PieChart";
 
-const columns = [
-  {
-    Header: "",
-    accessor: "select",
-  },
-  {
-    Header: "Created By",
-    accessor: "creator",
-  },
-  {
-    Header: "Created On",
-    accessor: "created_on",
-  },
-  {
-    Header: "Type",
-    accessor: "leadtype",
-  },
-  {
-    Header: "Name",
-    accessor: "name",
-  },
-  {
-    Header: "Status",
-    accessor: "status",
-  },
-  {
-    Header: "Assigned",
-    accessor: "assigned",
-  },
-  {
-    Header: "Source",
-    accessor: "source",
-  },
-  {
-    Header: "Follow-up Date",
-    accessor: "followup_date",
-  },
-  {
-    Header: "Follow-up Reason",
-    accessor: "followup_reason",
-  },
-  {
-    Header: "Phone",
-    accessor: "phone",
-  },
-  {
-    Header: "Email",
-    accessor: "email",
-  },
-  {
-    Header: "Location",
-    accessor: "location",
-  },
-  {
-    Header: "PRC QT",
-    accessor: "prc_qt",
-  },
-  {
-    Header: "Lead Category",
-    accessor: "leadCategory",
-  },
-  // This is the Demo File header commented out.
-  // {
-  //   Header: "Demo File",
-  //   accessor: "demoPdf",
-  //   Cell: ({ row }) => (
-  //     row.original.demoPdf ? (
-  //       <a
-  //         href={row.original.demoPdf}
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //         className="text-blue-500 underline"
-  //       >
-  //         View File
-  //       </a>
-  //     ) : (
-  //       <span>No File</span>
-  //     )
-  //   ),
-  // },
-];
+// columns moved inside component
 
 const Leads = () => {
   const [cookies] = useCookies();
@@ -222,6 +143,28 @@ const Leads = () => {
   const [templateId, setTemplateId] = useState('');
   const [templateText, setTemplateText] = useState('');
   const [savingTemplate, setSavingTemplate] = useState(false); // For loading state on save
+
+  // Table columns: hide Created On, Created By, Assigned, Source, Follow-up Date/Reason, PRC QT from main table.
+  // Add a View button to open details drawer where these fields are shown.
+  const columns = useMemo(() => [
+    { Header: "", accessor: "select" },
+    { Header: "Type", accessor: "leadtype" },
+    { Header: "Name", accessor: "name" },
+    { Header: "Status", accessor: "status" },
+    { Header: "Phone", accessor: "phone" },
+    { Header: "Email", accessor: "email" },
+    { Header: "Location", accessor: "location" },
+    { Header: "Lead Category", accessor: "leadCategory" },
+    {
+      Header: "View",
+      accessor: "view",
+      Cell: ({ row }) => (
+        <Button size="sm" onClick={() => { setDataId(row.original._id); dispatch(openShowDetailsLeadsDrawer()); }}>
+          View
+        </Button>
+      ),
+    },
+  ], [dispatch]);
 
   const {
     getTableProps,
@@ -1949,12 +1892,12 @@ const Leads = () => {
                                 />
 
                                 {/* View Details */}
-                                <MdOutlineVisibility
+                                {/* <MdOutlineVisibility
                                   className="text-blue-500 hover:scale-110 transition-transform cursor-pointer"
                                   size={20}
                                   title="View Details"
                                   onClick={() => showDetailsHandler(row.original?._id)}
-                                />
+                                /> */}
 
                                 {/* Edit */}
                                 <MdEdit

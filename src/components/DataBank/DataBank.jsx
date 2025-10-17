@@ -298,11 +298,14 @@ const DataBank = () => {
         throw new Error(data.message);
       }
 
-      // Filter leads where dataBank is true
-      const filteredLeads = data.leads.filter((lead) => lead.dataBank === true);
-      setData(filteredLeads);
-      setFilteredData(filteredLeads);
-      setLeadLength(filteredLeads.length);
+      // Filter leads where dataBank is true and merge archived Individuals/Companies from response
+      const dataBankLeads = (data.leads || []).filter((lead) => lead.dataBank === true);
+      const archivedIndividuals = data.archivedIndividuals || [];
+      const archivedCompanies = data.archivedCompanies || [];
+      const merged = [...dataBankLeads, ...archivedIndividuals, ...archivedCompanies];
+      setData(merged);
+      setFilteredData(merged);
+      setLeadLength(merged.length);
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -763,12 +766,12 @@ const DataBank = () => {
                                         style={{
                                           backgroundColor:
                                             statusStyles[
-                                              row.original.status.toLowerCase()
-                                            ].bg,
+                                              row.original.status?.toLowerCase?.()
+                                            ]?.bg || "#f0f0f0",
                                           color:
                                             statusStyles[
-                                              row.original.status.toLowerCase()
-                                            ].text,
+                                              row.original.status?.toLowerCase?.()
+                                            ]?.text || "#333",
                                         }}
                                       >
                                         {row.original.status}
@@ -782,12 +785,12 @@ const DataBank = () => {
                                         style={{
                                           backgroundColor:
                                             sourceStyles[
-                                              row.original.source.toLowerCase()
-                                            ]?.bg,
+                                              row.original.source?.toLowerCase?.()
+                                            ]?.bg || "#f0f0f0",
                                           color:
                                             sourceStyles[
-                                              row.original.source.toLowerCase()
-                                            ]?.text,
+                                              row.original.source?.toLowerCase?.()
+                                            ]?.text || "#333",
                                         }}
                                       >
                                         {row.original.source}
