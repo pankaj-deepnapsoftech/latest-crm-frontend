@@ -263,6 +263,7 @@ const CompaniesDrawer = ({ fetchAllCompanies, closeDrawerHandler }) => {
               type="number"
               className="no-scroll mt-2 border p-3 focus:ring-2 focus:ring-blue-400"
               placeholder="Enter Phone Number"
+              maxLength={10}
             />
           </FormControl>
 
@@ -303,6 +304,7 @@ const CompaniesDrawer = ({ fetchAllCompanies, closeDrawerHandler }) => {
               onChange={(e) => setGstNo(e.target.value)}
               placeholder="Enter GST No."
               className="rounded mt-2 border p-3 focus:ring-2 focus:ring-blue-400"
+              maxLength={15}
             />
           </FormControl>
 

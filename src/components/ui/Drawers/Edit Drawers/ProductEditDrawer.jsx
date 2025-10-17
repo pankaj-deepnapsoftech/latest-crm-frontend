@@ -59,13 +59,13 @@ const ProductsEditDrawer = ({
         const formData = new FormData();
         formData.append("file", file.current.files[0]);
 
-        const imageUploadResponse = await fetch(
-          process.env.REACT_APP_IMAGE_UPLOAD_URL,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        const uploadUrl =
+          process.env.REACT_APP_IMAGE_UPLOAD_URL ||
+          "https://images.deepmart.shop/upload";
+        const imageUploadResponse = await fetch(uploadUrl, {
+          method: "POST",
+          body: formData,
+        });
         imageUrl = await imageUploadResponse.json();
 
         if (imageUrl?.error) {

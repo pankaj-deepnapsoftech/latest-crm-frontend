@@ -9,7 +9,7 @@ import { BiX } from "react-icons/bi";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Loading from "../../Loading";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
@@ -27,10 +27,13 @@ const ExpenseEditDrawer = ({
   const [total, setTotal] = useState("");
   const [description, setDescription] = useState("");
   const [ref, setRef] = useState("");
+  const [expenseType, setExpenseType] = useState({ value: "TA", label: "TA" });
   const [isLoading, setIsLoading] = useState(false);
+  const [approvalStatus, setApprovalStatus] = useState("Pending");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const auth = useSelector((state) => state.auth);
 
   const fetchExpenseDetails = async () => {
     setIsLoading(true);
@@ -61,11 +64,44 @@ const ExpenseEditDrawer = ({
       });
       setRef(data.expense.ref);
       setTotal(data.expense.price);
+      if (data.expense.expenseType) {
+        setExpenseType({
+          value: data.expense.expenseType,
+          label: data.expense.expenseType,
+        });
+      }
+      if (data.expense.approvalStatus) {
+        setApprovalStatus(data.expense.approvalStatus);
+      }
 
       toast.success(data.message);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
+      toast.error(err.message);
+    }
+  };
+
+  const handleApproval = async (action) => {
+    try {
+      const baseURL = process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(baseURL + "expense/update-approval", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${cookies?.access_token}`,
+        },
+        body: JSON.stringify({ expenseId: id, action }),
+      });
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+      setApprovalStatus(action === "approve" ? "Approved" : "Rejected");
+      toast.success(data.message);
+      await fetchExpenseDetails();
+      fetchAllExpenses();
+    } catch (err) {
       toast.error(err.message);
     }
   };
@@ -114,6 +150,7 @@ const ExpenseEditDrawer = ({
           description,
           ref,
           price: total,
+          expenseType: expenseType?.value,
         }),
       });
 
@@ -166,85 +203,137 @@ const ExpenseEditDrawer = ({
 
         {isLoading && <Loading />}
         {!isLoading && (
-          <form onSubmit={editExpenseHandler} className="space-y-5">
-            <FormControl className="mt-3 mb-5" isRequired>
-              <FormLabel fontWeight="bold" className="text-[#4B5563]">
-                Name
-              </FormLabel>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                type="text"
-                placeholder="Enter name"
-                className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </FormControl>
-
-            <div className="mt-2 mb-5">
-              <label className="font-bold text-[#4B5563]">Category</label>
-              <Select
-                className="rounded mt-2 p-3 border focus:outline-none focus:ring-2 focus:ring-blue-400"
-                options={categoryOptions}
-                placeholder="Select category"
-                value={category}
-                onChange={(d) => {
-                  if (d.value === "Add Category") {
-                    closeDrawerHandler();
-                    navigate("/crm/products-category");
+          <>
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-sm">
+                <span className="font-semibold mr-2">Approval:</span>
+                <span
+                  className={
+                    approvalStatus === "Approved"
+                      ? "text-green-600"
+                      : approvalStatus === "Rejected"
+                      ? "text-red-600"
+                      : "text-yellow-600"
                   }
-                  setCategory(d);
-                }}
-                isSearchable={true}
-              />
+                >
+                  {approvalStatus}
+                </span>
+              </div>
+              {(auth?.role === "Super Admin" || auth?.role === "Admin") &&
+                approvalStatus === "Pending" && (
+                  <div className="flex gap-x-2">
+                    <Button
+                      size="sm"
+                      colorScheme="green"
+                      onClick={() => handleApproval("approve")}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      size="sm"
+                      colorScheme="red"
+                      onClick={() => handleApproval("reject")}
+                    >
+                      Reject
+                    </Button>
+                  </div>
+                )}
             </div>
+            <form onSubmit={editExpenseHandler} className="space-y-5">
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                  Name
+                </FormLabel>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  type="text"
+                  placeholder="Enter name"
+                  className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </FormControl>
 
-            <FormControl className="mt-3 mb-5" isRequired>
-              <FormLabel fontWeight="bold" className="text-[#4B5563]">
-                Total
-              </FormLabel>
-              <Input
-                value={total}
-                onChange={(e) => setTotal(e.target.value)}
-                type="number"
-                placeholder="Enter total"
-                className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </FormControl>
+              <div className="mt-2 mb-5">
+                <label className="font-bold text-[#4B5563]">Category</label>
+                <Select
+                  className="rounded mt-2 p-3 border focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  options={categoryOptions}
+                  placeholder="Select category"
+                  value={category}
+                  onChange={(d) => {
+                    if (d.value === "Add Category") {
+                      closeDrawerHandler();
+                      navigate("/crm/products-category");
+                    }
+                    setCategory(d);
+                  }}
+                  isSearchable={true}
+                />
+              </div>
 
-            <FormControl className="mt-3 mb-5">
-              <FormLabel fontWeight="bold" className="text-[#4B5563]">
-                Description
-              </FormLabel>
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                resize="none"
-                className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Enter description"
-              />
-            </FormControl>
+              <div className="mt-2 mb-5">
+                <label className="font-bold text-[#4B5563]">Expense Type</label>
+                <Select
+                  className="rounded mt-2"
+                  options={[
+                    { value: "TA", label: "TA" },
+                    { value: "DA", label: "DA" },
+                  ]}
+                  placeholder="Select type"
+                  value={expenseType}
+                  onChange={(d) => setExpenseType(d)}
+                  isSearchable={false}
+                />
+              </div>
 
-            <FormControl className="mt-3 mb-5">
-              <FormLabel fontWeight="bold" className="text-[#4B5563]">
-                Ref
-              </FormLabel>
-              <Input
-                value={ref}
-                onChange={(e) => setRef(e.target.value)}
-                type="text"
-                placeholder="Enter reference"
-                className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </FormControl>
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                  Total
+                </FormLabel>
+                <Input
+                  value={total}
+                  onChange={(e) => setTotal(e.target.value)}
+                  type="number"
+                  placeholder="Enter total"
+                  className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </FormControl>
 
-            <Button
-              type="submit"
-              className="mt-1 w-full py-3 text-white font-bold rounded-lg"
-              colorScheme="blue"
-            >
-              Submit
-            </Button>
-          </form>
+              <FormControl className="mt-3 mb-5">
+                <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                  Description
+                </FormLabel>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  resize="none"
+                  className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder="Enter description"
+                />
+              </FormControl>
+
+              <FormControl className="mt-3 mb-5">
+                <FormLabel fontWeight="bold" className="text-[#4B5563]">
+                  Ref
+                </FormLabel>
+                <Input
+                  value={ref}
+                  onChange={(e) => setRef(e.target.value)}
+                  type="text"
+                  placeholder="Enter reference"
+                  className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </FormControl>
+
+              <Button
+                type="submit"
+                className="mt-1 w-full py-3 text-white font-bold rounded-lg"
+                colorScheme="blue"
+              >
+                Submit
+              </Button>
+            </form>
+          </>
         )}
       </div>
     </div>

@@ -23,6 +23,7 @@ const ExpensesDrawer = ({ fetchAllExpenses, closeDrawerHandler }) => {
   const [total, setTotal] = useState("");
   const [description, setDescription] = useState("");
   const [ref, setRef] = useState("");
+  const [expenseType, setExpenseType] = useState({ value: "TA", label: "TA" });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ const ExpensesDrawer = ({ fetchAllExpenses, closeDrawerHandler }) => {
           description,
           ref,
           price: total,
+          expenseType: expenseType?.value,
         }),
       });
 
@@ -150,6 +152,22 @@ const ExpensesDrawer = ({ fetchAllExpenses, closeDrawerHandler }) => {
                 setCategory(d);
               }}
               isSearchable={true}
+            />
+          </div>
+
+          {/* Expense Type (TA/DA) */}
+          <div className="mt-2 mb-5">
+            <label className="font-bold text-[#4B5563]">Expense Type</label>
+            <Select
+              className="rounded mt-2"
+              options={[
+                { value: "TA", label: "TA" },
+                { value: "DA", label: "DA" },
+              ]}
+              placeholder="Select type"
+              value={expenseType}
+              onChange={(d) => setExpenseType(d)}
+              isSearchable={false}
             />
           </div>
 
